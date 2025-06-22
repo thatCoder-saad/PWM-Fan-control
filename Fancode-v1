@@ -1,0 +1,25 @@
+const int fanPin = 9;
+const int potPin = A0;
+
+void setup() {
+  pinMode(fanPin, OUTPUT);
+
+  // Set up Timer1 for 25 kHz PWM on pin 9
+  TCCR1A = _BV(COM1A1) | _BV(WGM11);
+  TCCR1B = _BV(WGM13) | _BV(CS10);
+  ICR1 = 320;
+}
+
+void loop() {
+  int potValue = analogRead(potPin);  // 0 to 1023
+
+  // Map to 96 (30%) to 320 (100%) range
+  int pwmValue = map(potValue, 0, 1023, 96, 320);
+
+  // Optional: Clamp in case pot noise overshoots limits
+  pwmValue = constrain(pwmValue, 96, 320);
+
+  OCR1A = pwmValue;
+
+  delay(10);
+}
